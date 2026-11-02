@@ -1,4 +1,5 @@
 #include <limits.h>
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -7,18 +8,19 @@ int main(void) {
     int** A;
     int dep_num;
     int cycle_num = 0;
+    int rota_num = 0;
 
     printf("Enter the size of CH: ");
     scanf("%d", &s);
 
-    A = (int**)malloc(2 * sizeof(int));
+    A = (int**)malloc(2 * sizeof(int*));
 
     for (i = 0; i < 2; i++) {
         A[i] = (int*)malloc(s * sizeof(int));
     }
 
     for (i = 0; i < s; i++) {
-        A[1][i] = i + 1;
+        A[0][i] = 0;
     }
 
     printf("Enter %d values for CH: ", s);
@@ -26,24 +28,28 @@ int main(void) {
         scanf("%d", &A[1][i]);
     }
 
-    dep_num = INT_MAX;
-
     printf("Cycle Decomposition: ");
 
-    printf("( ");
-    for (i = 0; i != dep_num - 1;) {
-        if (i == 0) {
-            printf("%d ", i + 1);
-            dep_num = 1;
+    for (i = 0; i < s; i++) {
+        if (A[0][i]) {
+            continue;
         }
-        if (A[1][i] != dep_num) {
-            printf("%d ", A[1][i]);
-        }
-        i = A[1][i] - 1;
-    }
-    printf(") ");
-    cycle_num += 1;
 
-    printf("\nCycle: %d", cycle_num);
+        int current = i;
+        printf("( ");
+
+        while (!A[0][current]) {
+            A[0][current] = 1;
+            printf("%d ", current + 1);
+            current = A[1][current] - 1;
+        }
+
+        printf(")");
+        cycle_num++;
+    }
+
+    printf("\nCycle: %d\n", cycle_num);
+    printf("Sgn: %d\n", pow(-1, s - cycle_num));
+
     return 0;
 }
